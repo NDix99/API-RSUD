@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teras_list_tmps', function (Blueprint $table) {
+        Schema::create('hasils', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('order_id');
+            $table->json('data');
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teras_list_tmps');
+        Schema::dropIfExists('hasils');
     }
 };
