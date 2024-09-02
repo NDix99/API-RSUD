@@ -1,4 +1,5 @@
 <?php
+
 require "./engine/playload.php";
 
 function buildQueryData($additionalData = []) {
@@ -15,19 +16,25 @@ function buildQueryData($additionalData = []) {
 }
 
 function sendRequest($endpoint, $data, $headers) {
-    $data = sendPostRequest($endpoint, $data, $headers);
-    $decodedData = json_decode($data);
-    return $decodedData;
+    $response = sendRequest($endpoint, $data, $headers);
+    $decodedResponse = json_decode($response);
+    file_put_contents('debug_response.json', json_encode($decodedResponse, JSON_PRETTY_PRINT));
+    return $decodedResponse;
 }
 
-$data_order = buildQueryData(['cari' => '', 'status' => '2']);
-$data_notif = buildQueryData(['cnk' => 1]);
+$date_now = date('Y-m-d');
+$date_1_day_ago = date('Y-m-d', strtotime('-300 day'));
 
-$rsp_data = sendRequest("listo_has.php", $data_order, $headers);
-// $rsp_notif = sendRequest("notif.php", $data_notif, $headers);
+$queryData = buildQueryData([
+    'page' => 1,
+    'key' => '',
+    'filter' => 3,
+    'fdt' => $date_now,
+    'fdf' => $date_1_day_ago,
+    'frux' => 0,
+    'tfrux' => 'Ruangan',
+    'modx' => 0
+]);
 
-foreach ($rsp_data as $lis_data) {
-    $req_hasil = buildQueryData(['noo' => $lis_data->no_order]);
-    $rsp_hasil = sendRequest("dataHasil.php", $req_hasil, $headers);
-    print_r($rsp_hasil);
-}
+$dataDaftarOrder = sendRequest("list_order.php", $queryData, $headers);
+print_r($dataDaftarOrder);
